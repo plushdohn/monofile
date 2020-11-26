@@ -7,8 +7,12 @@ export function setProgressHandler(handler: (n: number) => any) {
   progressHandler = handler;
 }
 
+export function removeProgressHandler() {
+  progressHandler = null;
+}
+
 export function init() {
-  instance = createFFmpeg({ log: true });
+  instance = createFFmpeg({ log: process.env.NODE_ENV === "development" });
 
   return instance.load();
 }

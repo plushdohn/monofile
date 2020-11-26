@@ -1,17 +1,17 @@
-var colors = require('tailwindcss/colors')
+var colors = require("tailwindcss/colors");
 
 module.exports = {
-  purge: [],
+  purge: ["./pages/**/*.tsx", "./components/**/*.tsx"],
   darkMode: false,
   theme: {
     extend: {
       colors: {
-        gray: colors.gray
-      }
+        gray: colors.gray,
+      },
     },
   },
   variants: {
     extend: {},
   },
   plugins: [],
-}
+};

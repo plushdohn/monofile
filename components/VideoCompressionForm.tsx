@@ -4,7 +4,11 @@ import RangeInput from "./RangeInput";
 import useVideoDuration from "hooks/useVideoDuration";
 import Button from "./Button";
 import Spinner from "./Spinner";
-import { compressVideo, setProgressHandler } from "api/ffmpeg";
+import {
+  compressVideo,
+  removeProgressHandler,
+  setProgressHandler,
+} from "api/ffmpeg";
 
 type Props = {
   file: File;
@@ -24,6 +28,16 @@ export default function VideoCompressionForm(props: Props) {
     return startTimeValue + 1;
   }, [startTimeValue]);
 
+  const resolutionAlias = useMemo(() => {
+    if (resolutionFactorValue === 4) {
+      return "Full";
+    } else if (resolutionFactorValue === 3) {
+      return "Half";
+    } else if (resolutionFactorValue === 2) {
+      return "Third";
+    } else return "Quarter";
+  }, [resolutionFactorValue]);
+
   useEffect(() => {
     if (endTimeValue <= startTimeValue) setEndTimeValue(startTimeValue + 2);
   }, [startTimeValue, endTimeValue, setEndTimeValue]);
@@ -39,14 +53,10 @@ export default function VideoCompressionForm(props: Props) {
       startTimeValue,
       endTimeValue,
       5 - resolutionFactorValue
-    )
-      .then(() => {
-        console.log("COCK");
-      })
-      .finally(() => {
-        setIsProcessing(false);
-        setProgress(0);
-      });
+    ).finally(() => {
+      setIsProcessing(false);
+      removeProgressHandler();
+    });
   }
 
   return (
@@ -77,13 +87,13 @@ export default function VideoCompressionForm(props: Props) {
       </div>
       <div className="w-full p-4 pt-3 border-t border-gray-700">
         <RangeInput
-          label="Resolution scaling"
+          label="Resolution"
           min={1}
           max={4}
           value={resolutionFactorValue}
           onChange={setResolutionFactorValue}
           disabled={isProcessing}
-          customValue={`1/${5 - resolutionFactorValue}`}
+          customValue={resolutionAlias}
         />
         <Button
           callback={handleSubmit}
