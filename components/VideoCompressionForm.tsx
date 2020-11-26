@@ -12,6 +12,7 @@ import {
 
 type Props = {
   file: File;
+  isInstanceReady: boolean;
 };
 
 export default function VideoCompressionForm(props: Props) {
@@ -23,6 +24,10 @@ export default function VideoCompressionForm(props: Props) {
   const [resolutionFactorValue, setResolutionFactorValue] = useState(3);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const isFormDisabled = useMemo(() => {
+    return isProcessing || !props.isInstanceReady;
+  }, [isProcessing, props.isInstanceReady]);
 
   const minEndTime = useMemo(() => {
     return startTimeValue + 1;
@@ -73,7 +78,7 @@ export default function VideoCompressionForm(props: Props) {
           max={duration - 2}
           value={startTimeValue}
           onChange={setStartTimeValue}
-          disabled={isProcessing}
+          disabled={isFormDisabled}
         />
         <RangeInput
           label="End time"
@@ -82,7 +87,7 @@ export default function VideoCompressionForm(props: Props) {
           value={endTimeValue}
           onChange={setEndTimeValue}
           className="mt-4"
-          disabled={isProcessing}
+          disabled={isFormDisabled}
         />
       </div>
       <div className="w-full p-4 pt-3 border-t border-gray-700">
@@ -92,21 +97,28 @@ export default function VideoCompressionForm(props: Props) {
           max={4}
           value={resolutionFactorValue}
           onChange={setResolutionFactorValue}
-          disabled={isProcessing}
+          disabled={isFormDisabled}
           customValue={resolutionAlias}
         />
         <Button
           callback={handleSubmit}
           className="w-full mt-6"
-          disabled={isProcessing}
+          disabled={isFormDisabled}
         >
-          {isProcessing ? (
+          {props.isInstanceReady ? (
+            isProcessing ? (
+              <>
+                <Spinner className="mr-2 w-5 h-5" />
+                <span>Processing... {progress}%</span>
+              </>
+            ) : (
+              <span>Compress video</span>
+            )
+          ) : (
             <>
               <Spinner className="mr-2 w-5 h-5" />
-              <span>Processing... {progress}%</span>
+              <span>Loading core script...</span>
             </>
-          ) : (
-            <span>Compress video</span>
           )}
         </Button>
       </div>
