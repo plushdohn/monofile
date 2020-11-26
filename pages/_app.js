@@ -6,6 +6,7 @@ export default function Root({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <title>MonoFile</title>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
