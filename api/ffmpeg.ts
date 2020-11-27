@@ -20,7 +20,9 @@ export function init() {
     }
   }
 
-  return new Promise((res) => res());
+  return new Promise<void>((res) => {
+    res();
+  });
 }
 
 export async function compressImage(f: File, scaling: number) {
