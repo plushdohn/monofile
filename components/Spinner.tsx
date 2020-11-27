@@ -16,7 +16,7 @@ export default function Spinner(props: Props) {
         cx="12"
         cy="12"
         r="10"
-        stroke-width="4"
+        strokeWidth="4"
       />
       <path
         className="opacity-75 fill-current"

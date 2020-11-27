@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import useFileUrl from "hooks/useFileUrl";
 import RangeInput from "./RangeInput";
-import useVideoDuration from "hooks/useVideoDuration";
 import Button from "./Button";
 import Spinner from "./Spinner";
 import {
-  compressVideo,
+  compressImage,
   removeProgressHandler,
   setProgressHandler,
 } from "api/ffmpeg";
@@ -15,12 +14,9 @@ type Props = {
   isInstanceReady: boolean;
 };
 
-export default function VideoCompressionForm(props: Props) {
+export default function PictureCompressionForm(props: Props) {
   const url = useFileUrl(props.file);
-  const duration = useVideoDuration(url);
 
-  const [startTimeValue, setStartTimeValue] = useState(0);
-  const [endTimeValue, setEndTimeValue] = useState(10);
   const [resolutionFactorValue, setResolutionFactorValue] = useState(3);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -29,10 +25,6 @@ export default function VideoCompressionForm(props: Props) {
   const isFormDisabled = useMemo(() => {
     return isProcessing || !props.isInstanceReady;
   }, [isProcessing, props.isInstanceReady]);
-
-  const minEndTime = useMemo(() => {
-    return startTimeValue + 1;
-  }, [startTimeValue]);
 
   const resolutionAlias = useMemo(() => {
     if (resolutionFactorValue === 4) {
@@ -44,10 +36,6 @@ export default function VideoCompressionForm(props: Props) {
     } else return "Quarter";
   }, [resolutionFactorValue]);
 
-  useEffect(() => {
-    if (endTimeValue <= startTimeValue) setEndTimeValue(startTimeValue + 2);
-  }, [startTimeValue, endTimeValue, setEndTimeValue]);
-
   function handleSubmit() {
     setIsProcessing(true);
 
@@ -58,12 +46,7 @@ export default function VideoCompressionForm(props: Props) {
       setProgress(Math.floor(ratio * 100));
     });
 
-    compressVideo(
-      props.file,
-      startTimeValue,
-      endTimeValue,
-      5 - resolutionFactorValue
-    )
+    compressImage(props.file, 5 - resolutionFactorValue)
       .catch((err) => setProcessingError(true))
       .finally(() => {
         setIsProcessing(false);
@@ -73,30 +56,7 @@ export default function VideoCompressionForm(props: Props) {
 
   return (
     <div className="rounded bg-gray-800">
-      <video
-        src={url}
-        controls
-        className="p-4 w-96 h-64 object-cover rounded"
-      />
-      <div className="w-full p-4 pt-3 border-t border-gray-700">
-        <RangeInput
-          label="Start time"
-          min={0}
-          max={duration - 2}
-          value={startTimeValue}
-          onChange={setStartTimeValue}
-          disabled={isFormDisabled}
-        />
-        <RangeInput
-          label="End time"
-          min={minEndTime}
-          max={duration}
-          value={endTimeValue}
-          onChange={setEndTimeValue}
-          className="mt-4"
-          disabled={isFormDisabled}
-        />
-      </div>
+      <img src={url} className="p-4 w-96 h-64 object-cover rounded" />
       <div className="w-full flex flex-col items-center p-4 pt-3 border-t border-gray-700">
         <RangeInput
           label="Resolution"
@@ -120,7 +80,7 @@ export default function VideoCompressionForm(props: Props) {
                 <span>Processing... {progress}%</span>
               </>
             ) : (
-              <span>Process video</span>
+              <span>Process image</span>
             )
           ) : (
             <>

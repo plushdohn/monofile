@@ -13,7 +13,7 @@ export default function FileInput(props: Props) {
     const files = e.target.files;
 
     if (files !== null) {
-      if (files[0].type === "video/mp4") props.callback(files[0]);
+      props.callback(files[0]);
     }
   }
 
@@ -26,7 +26,12 @@ export default function FileInput(props: Props) {
       } ${props.className || ""}`}
     >
       {props.children}
-      <input type="file" className="hidden" onChange={handler} accept=".mp4" />
+      <input
+        type="file"
+        className="hidden"
+        onChange={handler}
+        accept="video/mp4,image/jpeg,image/x-png"
+      />
     </label>
   );
 }
