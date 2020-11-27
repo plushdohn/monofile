@@ -1,4 +1,4 @@
-import { useState, useEffect, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent, DragEvent } from "react";
 import FileInput from "components/FileInput";
 import FileUploadIcon from "components/FileUploadIcon";
 import PictureCompressionForm from "components/PictureCompressionForm";
@@ -6,11 +6,13 @@ import VideoCompressionForm from "components/VideoCompressionForm";
 import { init } from "api/ffmpeg";
 import Link from "next/link";
 import InfoIcon from "components/InfoIcon";
+import DryFileInput from "components/DryFileInput";
 
 export default function IndexPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isInstanceReady, setIsInstanceReady] = useState(false);
   const [instanceError, setInstanceError] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     init()
@@ -22,7 +24,7 @@ export default function IndexPage() {
       });
   }, []);
 
-  function onFileChange(f: File) {
+  function handleFileChange(f: File) {
     setFile(f);
   }
 
@@ -34,8 +36,31 @@ export default function IndexPage() {
     setFile(null);
   }
 
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
+    setIsDragging(true);
+
+    e.preventDefault();
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    setFile(file);
+  }
+
   return (
-    <div className="w-full h-full flex flex-col justify-between items-center">
+    <div
+      className="w-full h-full flex flex-col justify-between items-center"
+      onDragOver={handleDragOver}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+    >
       <div />
       {instanceError ? (
         <div className="flex flex-col items-center">
@@ -45,8 +70,12 @@ export default function IndexPage() {
             <br /> This usually means your browser's not supported yet.
           </span>
         </div>
+      ) : isDragging ? (
+        <span className="pointer-events-none text-3xl text-gray-700 border-4 font-semibold border-gray-700 rounded border-dashed p-8">
+          Drop your file anywhere in the window
+        </span>
       ) : file === null ? (
-        <FileInput callback={onFileChange} paddingClass="py-4 px-6">
+        <FileInput callback={handleFileChange} paddingClass="py-4 px-6">
           <span>Choose a file</span>
           <FileUploadIcon className="w-6 h-6 ml-2" />
         </FileInput>
@@ -55,13 +84,11 @@ export default function IndexPage() {
           <VideoCompressionForm file={file} isInstanceReady={isInstanceReady} />
           <span className="text-gray-600 mt-2 text-sm">
             or{" "}
-            <a
-              className="font-semibold hover:underline focus:underline"
-              href="#"
-              onClick={useAnotherFileHandler}
-            >
-              Use another file
-            </a>
+            <DryFileInput callback={handleFileChange}>
+              <a className="font-semibold hover:underline focus:underline cursor-pointer">
+                Use another file
+              </a>
+            </DryFileInput>
           </span>
         </div>
       ) : file.type === "image/jpeg" || file.type === "image/png" ? (
@@ -72,13 +99,11 @@ export default function IndexPage() {
           />
           <span className="text-gray-600 mt-2 text-sm">
             or{" "}
-            <a
-              className="font-semibold hover:underline focus:underline"
-              href="#"
-              onClick={useAnotherFileHandler}
-            >
-              Use another file
-            </a>
+            <DryFileInput callback={handleFileChange}>
+              <a className="font-semibold hover:underline focus:underline cursor-pointer">
+                Use another file
+              </a>
+            </DryFileInput>
           </span>
         </div>
       ) : (
@@ -86,13 +111,11 @@ export default function IndexPage() {
           Unsupported file type.
           <br />
           Click{" "}
-          <a
-            href="#"
-            className="font-bold hover:underline focus:underline"
-            onClick={useAnotherFileHandler}
-          >
-            here
-          </a>{" "}
+          <DryFileInput callback={handleFileChange}>
+            <a className="font-bold hover:underline focus:underline cursor-pointer">
+              here
+            </a>
+          </DryFileInput>{" "}
           to choose another file.
         </span>
       )}

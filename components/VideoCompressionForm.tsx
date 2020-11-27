@@ -48,6 +48,10 @@ export default function VideoCompressionForm(props: Props) {
     if (endTimeValue <= startTimeValue) setEndTimeValue(startTimeValue + 2);
   }, [startTimeValue, endTimeValue, setEndTimeValue]);
 
+  useEffect(() => {
+    setEndTimeValue(duration);
+  }, [duration]);
+
   function handleSubmit() {
     setIsProcessing(true);
 
@@ -62,7 +66,8 @@ export default function VideoCompressionForm(props: Props) {
       props.file,
       startTimeValue,
       endTimeValue,
-      5 - resolutionFactorValue
+      5 - resolutionFactorValue,
+      duration
     )
       .catch((err) => setProcessingError(true))
       .finally(() => {

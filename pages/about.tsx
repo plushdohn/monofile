@@ -1,14 +1,14 @@
 export default function AboutPage() {
   return (
     <div className="w-full min-h-full flex flex-col items-center py-24 text-gray-600">
-      <span className="font-bold text-3xl">About MonoFile</span>
+      <span className="font-bold text-3xl">About reduce.media</span>
       <span className="w-144 text-justify font-semibold mt-4">
-        MonoFile is an offline web app that allows for simple operations on
-        media files without uploading them anywhere, using the user's CPU to do
-        the work instead. <br />
+        reduce.media is a web app that allows for simple operations on media
+        files without uploading them anywhere, using the user's CPU to do the
+        work instead. <br />
         <br />
-        It essentially provides a simple interface to the amazing work done by
-        the people over at{" "}
+        It provides a friendly interface to the amazing work done by the people
+        over at{" "}
         <a
           href="https://github.com/ffmpegwasm/ffmpeg.wasm"
           className="hover:underline focus:underline font-bold"

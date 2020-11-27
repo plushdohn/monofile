@@ -1,4 +1,5 @@
 import { createFFmpeg, FFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
+import { start } from "repl";
 
 let progressHandler: ((n: number) => any) | null = null;
 let instance: FFmpeg | null = null;
@@ -65,7 +66,8 @@ export async function compressVideo(
   f: File,
   startAt: number,
   endAt: number,
-  scaling: number
+  scaling: number,
+  videoDuration: number
 ) {
   if (!instance) {
     throw new Error(
@@ -74,6 +76,16 @@ export async function compressVideo(
   }
 
   const buffer = await fetchFile(f);
+
+  instance.setProgress(({ ratio }) => {
+    if (progressHandler) {
+      if (ratio < 0 || ratio > 1) {
+        return progressHandler(0);
+      }
+
+      return progressHandler(ratio * (videoDuration / (endAt - startAt)));
+    }
+  });
 
   instance.FS("writeFile", "in.mp4", buffer);
 
@@ -85,27 +97,12 @@ export async function compressVideo(
       startAt.toString(),
       "-to",
       endAt.toString(),
-      "-c",
-      "copy",
-      "trim.mp4"
+      "-vf",
+      `scale=iw/${scaling}:ih/${scaling}`,
+      "-preset",
+      "superfast",
+      f.name
     )
-    .then(() => {
-      instance?.setProgress(({ ratio }) => {
-        if (progressHandler) {
-          progressHandler(ratio < 0 ? 0 : ratio);
-        }
-      });
-
-      return instance?.run(
-        "-i",
-        "trim.mp4",
-        "-vf",
-        `scale=iw/${scaling}:ih/${scaling}`,
-        "-preset",
-        "superfast",
-        f.name
-      );
-    })
     .then(() => {
       instance?.setProgress(() => {});
 
