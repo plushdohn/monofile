@@ -8,6 +8,9 @@ module.exports = {
       colors: {
         gray: colors.gray,
       },
+      spacing: {
+        144: "36rem",
+      },
     },
   },
   variants: {
