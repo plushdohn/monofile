@@ -87,7 +87,7 @@ export default function VideoCompressionForm(props: Props) {
       />
       <div className="w-full p-4 pt-3 border-t border-gray-700">
         <RangeInput
-          label="Start time"
+          label="Start at second"
           min={0}
           max={duration - 2}
           value={startTimeValue}
@@ -95,7 +95,7 @@ export default function VideoCompressionForm(props: Props) {
           disabled={isFormDisabled}
         />
         <RangeInput
-          label="End time"
+          label="End at second"
           min={minEndTime}
           max={duration}
           value={endTimeValue}

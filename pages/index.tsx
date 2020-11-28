@@ -29,9 +29,9 @@ export default function IndexPage() {
   }
 
   function handleDragOver(e: DragEvent<HTMLDivElement>) {
-    if (e.dataTransfer.files.length > 0) {
-      setIsDragging(true);
-    }
+    setIsDragging(true);
+
+    console.log(e);
 
     e.preventDefault();
   }
@@ -69,12 +69,12 @@ export default function IndexPage() {
           Drop your file anywhere in the window
         </span>
       ) : file === null ? (
-        <FileInput callback={handleFileChange} paddingClass="py-4 px-6">
-          <span>Choose an image or a video</span>
+        <FileInput callback={handleFileChange} paddingClass="py-4 px-6 m-4">
+          <span className="text-center">Choose an image or a video</span>
           <FileUploadIcon className="w-6 h-6 ml-2" />
         </FileInput>
       ) : file.type === "video/mp4" ? (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center p-4">
           <VideoCompressionForm file={file} isInstanceReady={isInstanceReady} />
           <span className="text-gray-600 mt-2 text-sm">
             or{" "}
@@ -86,7 +86,7 @@ export default function IndexPage() {
           </span>
         </div>
       ) : file.type === "image/jpeg" || file.type === "image/png" ? (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center p-4">
           <PictureCompressionForm
             file={file}
             isInstanceReady={isInstanceReady}

@@ -55,8 +55,8 @@ export default function PictureCompressionForm(props: Props) {
   }
 
   return (
-    <div className="rounded bg-gray-800">
-      <img src={url} className="p-4 w-96 h-64 object-cover rounded" />
+    <div className="w-full md:w-96 rounded bg-gray-800">
+      <img src={url} className="p-4 w-full max-h-96 object-cover rounded" />
       <div className="w-full flex flex-col items-center p-4 pt-3 border-t border-gray-700">
         <RangeInput
           label="Resolution"
