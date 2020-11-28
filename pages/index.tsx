@@ -31,8 +31,6 @@ export default function IndexPage() {
   function handleDragOver(e: DragEvent<HTMLDivElement>) {
     setIsDragging(true);
 
-    console.log(e);
-
     e.preventDefault();
   }
 
