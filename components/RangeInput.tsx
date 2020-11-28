@@ -30,7 +30,9 @@ export default function RangeInput(props: Props) {
           max={props.max}
           value={props.value}
           onChange={handleChange}
-          className={`w-full ${props.disabled && "cursor-not-allowed"}`}
+          className={`w-full ${
+            props.disabled ? "cursor-not-allowed" : "cursor-pointer"
+          }`}
           disabled={props.disabled}
         />
         <span

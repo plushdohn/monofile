@@ -28,16 +28,10 @@ export default function IndexPage() {
     setFile(f);
   }
 
-  function useAnotherFileHandler(
-    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
-  ) {
-    e.preventDefault();
-
-    setFile(null);
-  }
-
   function handleDragOver(e: DragEvent<HTMLDivElement>) {
-    setIsDragging(true);
+    if (e.dataTransfer.files.length > 0) {
+      setIsDragging(true);
+    }
 
     e.preventDefault();
   }
@@ -76,7 +70,7 @@ export default function IndexPage() {
         </span>
       ) : file === null ? (
         <FileInput callback={handleFileChange} paddingClass="py-4 px-6">
-          <span>Choose a file</span>
+          <span>Choose an image or a video</span>
           <FileUploadIcon className="w-6 h-6 ml-2" />
         </FileInput>
       ) : file.type === "video/mp4" ? (

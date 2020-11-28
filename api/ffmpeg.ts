@@ -67,7 +67,8 @@ export async function compressVideo(
   startAt: number,
   endAt: number,
   scaling: number,
-  videoDuration: number
+  videoDuration: number,
+  compression: number
 ) {
   if (!instance) {
     throw new Error(
@@ -83,7 +84,11 @@ export async function compressVideo(
         return progressHandler(0);
       }
 
-      return progressHandler(ratio * (videoDuration / (endAt - startAt)));
+      ratio = ratio * (videoDuration / (endAt - startAt));
+
+      if (ratio > 1) ratio = 1;
+
+      return progressHandler(ratio);
     }
   });
 
@@ -91,16 +96,20 @@ export async function compressVideo(
 
   return instance
     .run(
-      "-i",
-      "in.mp4",
       "-ss",
       startAt.toString(),
       "-to",
       endAt.toString(),
-      "-vf",
-      `scale=iw/${scaling}:ih/${scaling}`,
+      "-i",
+      "in.mp4",
       "-preset",
       "superfast",
+      "-c:a",
+      "copy",
+      "-vf",
+      `scale=iw/${scaling}:ih/${scaling}`,
+      "-crf",
+      (25 + compression * 3).toString(),
       f.name
     )
     .then(() => {

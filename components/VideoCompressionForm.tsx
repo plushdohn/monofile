@@ -22,6 +22,7 @@ export default function VideoCompressionForm(props: Props) {
   const [startTimeValue, setStartTimeValue] = useState(0);
   const [endTimeValue, setEndTimeValue] = useState(10);
   const [resolutionFactorValue, setResolutionFactorValue] = useState(3);
+  const [compressionValue, setCompressionValue] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [processingError, setProcessingError] = useState(false);
@@ -67,7 +68,8 @@ export default function VideoCompressionForm(props: Props) {
       startTimeValue,
       endTimeValue,
       5 - resolutionFactorValue,
-      duration
+      duration,
+      compressionValue
     )
       .catch((err) => setProcessingError(true))
       .finally(() => {
@@ -112,6 +114,15 @@ export default function VideoCompressionForm(props: Props) {
           disabled={isFormDisabled}
           customValue={resolutionAlias}
           className="w-full"
+        />
+        <RangeInput
+          label="Compression amount"
+          min={0}
+          max={4}
+          value={compressionValue}
+          onChange={setCompressionValue}
+          disabled={isFormDisabled}
+          className="w-full mt-4"
         />
         <Button
           callback={handleSubmit}
