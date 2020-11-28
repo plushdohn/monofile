@@ -1,8 +1,10 @@
 import { createFFmpeg, FFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
-import { start } from "repl";
 
 let progressHandler: ((n: number) => any) | null = null;
 let instance: FFmpeg | null = null;
+
+const SUPPORTED_IMAGES = ["image/jpeg", "image/x-png"];
+const SUPPORTED_VIDEOS = ["video/mp4", "video/avi", "video/x-matroska"];
 
 export function setProgressHandler(handler: (n: number) => any) {
   progressHandler = handler;
@@ -26,6 +28,14 @@ export function init() {
   });
 }
 
+export function isImage(mimeType: string) {
+  return SUPPORTED_IMAGES.includes(mimeType);
+}
+
+export function isVideo(mimeType: string) {
+  return SUPPORTED_VIDEOS.includes(mimeType);
+}
+
 export async function compressImage(f: File, scaling: number) {
   if (!instance) {
     throw new Error(
@@ -41,20 +51,23 @@ export async function compressImage(f: File, scaling: number) {
     }
   });
 
-  instance.FS("writeFile", "in.jpg", buffer);
+  instance.FS("writeFile", f.name, buffer);
+
+  const fileNameWithoutExtension = f.name.split(".").slice(0, -1).join(".");
+  const outFileName = "out.jpg";
 
   return instance
-    .run("-i", "in.jpg", "-vf", `scale=iw/${scaling}:ih/${scaling}`, f.name)
+    .run("-i", f.name, "-vf", `scale=iw/${scaling}:ih/${scaling}`, outFileName)
     .then(() => {
       instance?.setProgress(() => {});
 
       const el = document.createElement("a");
 
-      const blob = new Blob([instance?.FS("readFile", f.name)]);
+      const blob = new Blob([instance?.FS("readFile", outFileName)]);
       const url = window.URL.createObjectURL(blob);
 
       el.href = url;
-      el.download = f.name;
+      el.download = fileNameWithoutExtension + ".jpg";
 
       el.click();
 
@@ -92,7 +105,10 @@ export async function compressVideo(
     }
   });
 
-  instance.FS("writeFile", "in.mp4", buffer);
+  instance.FS("writeFile", f.name, buffer);
+
+  const fileNameWithoutExtension = f.name.split(".").slice(0, -1).join(".");
+  const outFileName = "out.mp4";
 
   return instance
     .run(
@@ -101,7 +117,7 @@ export async function compressVideo(
       "-to",
       endAt.toString(),
       "-i",
-      "in.mp4",
+      f.name,
       "-preset",
       "superfast",
       "-c:a",
@@ -110,18 +126,18 @@ export async function compressVideo(
       `scale=iw/${scaling}:ih/${scaling}`,
       "-crf",
       (25 + compression * 3).toString(),
-      f.name
+      outFileName
     )
     .then(() => {
       instance?.setProgress(() => {});
 
       const el = document.createElement("a");
 
-      const blob = new Blob([instance?.FS("readFile", f.name)]);
+      const blob = new Blob([instance?.FS("readFile", outFileName)]);
       const url = window.URL.createObjectURL(blob);
 
       el.href = url;
-      el.download = f.name;
+      el.download = fileNameWithoutExtension + ".mp4";
 
       el.click();
 

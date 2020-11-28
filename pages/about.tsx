@@ -29,7 +29,7 @@ export default function AboutPage() {
         >
           u/lambsaucevirgin
         </a>{" "}
-        or at <b className="select-text">lambsaucevirgin@gmail.com</b>
+        or by e-mail at <b className="select-text">lambsaucevirgin@gmail.com</b>
       </span>
     </div>
   );

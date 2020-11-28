@@ -3,16 +3,23 @@ import FileInput from "components/FileInput";
 import FileUploadIcon from "components/FileUploadIcon";
 import PictureCompressionForm from "components/PictureCompressionForm";
 import VideoCompressionForm from "components/VideoCompressionForm";
-import { init } from "api/ffmpeg";
+import { init, isImage, isVideo } from "api/ffmpeg";
 import Link from "next/link";
 import InfoIcon from "components/InfoIcon";
 import DryFileInput from "components/DryFileInput";
+import FirefoxWarning from "components/FirefoxWarning";
 
 export default function IndexPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isInstanceReady, setIsInstanceReady] = useState(false);
   const [instanceError, setInstanceError] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.navigator.userAgent.indexOf("Firefox") >= 0)
+      setIsTooltipOpen(true);
+  }, []);
 
   useEffect(() => {
     init()
@@ -46,6 +53,10 @@ export default function IndexPage() {
     setFile(file);
   }
 
+  function handleFirefoxWarningClosure() {
+    setIsTooltipOpen(false);
+  }
+
   return (
     <div
       className="w-full h-full flex flex-col justify-between items-center"
@@ -53,13 +64,16 @@ export default function IndexPage() {
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
     >
+      {isTooltipOpen && (
+        <FirefoxWarning callback={handleFirefoxWarningClosure} />
+      )}
       <div />
       {instanceError ? (
         <div className="flex flex-col items-center">
           <span className="text-gray-600 font-bold text-6xl mb-6">:(</span>
           <span className="text-gray-600 font-semibold text-center">
             Couldn't load core script.
-            <br /> This usually means your browser's not supported yet.
+            <br /> This usually means your browser's not supported.
           </span>
         </div>
       ) : isDragging ? (
@@ -71,7 +85,7 @@ export default function IndexPage() {
           <span className="text-center">Choose an image or a video</span>
           <FileUploadIcon className="w-6 h-6 ml-2" />
         </FileInput>
-      ) : file.type === "video/mp4" ? (
+      ) : isVideo(file.type) ? (
         <div className="flex flex-col items-center p-4">
           <VideoCompressionForm file={file} isInstanceReady={isInstanceReady} />
           <span className="text-gray-600 mt-2 text-sm">
@@ -83,7 +97,7 @@ export default function IndexPage() {
             </DryFileInput>
           </span>
         </div>
-      ) : file.type === "image/jpeg" || file.type === "image/png" ? (
+      ) : isImage(file.type) ? (
         <div className="flex flex-col items-center p-4">
           <PictureCompressionForm
             file={file}
