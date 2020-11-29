@@ -4,7 +4,12 @@ let progressHandler: ((n: number) => any) | null = null;
 let instance: FFmpeg | null = null;
 
 const SUPPORTED_IMAGES = ["image/jpeg", "image/x-png"];
-const SUPPORTED_VIDEOS = ["video/mp4", "video/avi", "video/x-matroska"];
+const SUPPORTED_VIDEOS = [
+  "video/mp4",
+  "video/avi",
+  "video/x-matroska",
+  "video/webm",
+];
 
 export function setProgressHandler(handler: (n: number) => any) {
   progressHandler = handler;
