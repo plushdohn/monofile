@@ -30,7 +30,7 @@ export default function Root({ Component, pageProps }) {
         <meta name="theme-color" content="#ffffff" />
         <meta
           name="description"
-          content="Convert files with just the power of your browser, no internet required."
+          content="Compress videos and images with just the power of your browser, no internet required."
         />
       </Head>
       <Component {...pageProps} />
