@@ -1,3 +1,4 @@
+import { ACCEPTED_FILES } from "api/ffmpeg";
 import { ChangeEvent } from "react";
 
 type Props = {
@@ -30,7 +31,7 @@ export default function FileInput(props: Props) {
         type="file"
         className="hidden"
         onChange={handler}
-        accept="video/mp4,image/jpeg,image/x-png"
+        accept={ACCEPTED_FILES}
       />
     </label>
   );

@@ -1,3 +1,4 @@
+import { ACCEPTED_FILES } from "api/ffmpeg";
 import { ChangeEvent } from "react";
 
 type Props = {
@@ -19,7 +20,12 @@ export default function DryFileInput(props: Props) {
   return (
     <label>
       {props.children}
-      <input type="file" className="hidden" onChange={handler} />
+      <input
+        type="file"
+        className="hidden"
+        onChange={handler}
+        accept={ACCEPTED_FILES}
+      />
     </label>
   );
 }

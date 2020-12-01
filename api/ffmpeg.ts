@@ -3,13 +3,17 @@ import { createFFmpeg, FFmpeg, fetchFile } from "@ffmpeg/ffmpeg";
 let progressHandler: ((n: number) => any) | null = null;
 let instance: FFmpeg | null = null;
 
-const SUPPORTED_IMAGES = ["image/jpeg", "image/x-png"];
-const SUPPORTED_VIDEOS = [
+export const SUPPORTED_IMAGES = ["image/jpeg", "image/x-png"];
+export const SUPPORTED_VIDEOS = [
   "video/mp4",
   "video/avi",
   "video/x-matroska",
   "video/webm",
 ];
+
+export const ACCEPTED_FILES = [...SUPPORTED_VIDEOS, ...SUPPORTED_IMAGES].join(
+  ","
+);
 
 export function setProgressHandler(handler: (n: number) => any) {
   progressHandler = handler;
